@@ -4,11 +4,11 @@ namespace ProjectAPI.Data.Models
 {
     public class User : IdentityUser
     {
-        public Uri Image { get; set; }
-        public string Position { get; set; }
+        public Uri Image { get; set; } = default!;
+        public string Position { get; set; } = default!;
         public int Age { get; set; }
 
-        public User()
+        public User(string userName) : base(userName)
         {
 
         }

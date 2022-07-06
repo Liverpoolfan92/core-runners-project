@@ -6,19 +6,26 @@ namespace ProjectAPI.Data
 {
     public static class DataSeeder
     {
-        public static void Seed(this IHost host)
+        public static async Task Seed(this IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
                 var AdminRole = new IdentityRole("Admin");
                 var UserRole = new IdentityRole("User");
-                var Admin = new User();
 
-                roleManager.CreateAsync(AdminRole);
-                roleManager.CreateAsync(UserRole);
-                userManager.CreateAsync(Admin);
+
+                await roleManager.CreateAsync(AdminRole);
+                await roleManager.CreateAsync(UserRole);
+
+                var Admin = new User("admin@mail.bg");
+
+
+                await userManager.CreateAsync(Admin, "P@ssw0rd123");
+
+                await userManager.AddToRoleAsync(Admin, "Admin");
 
             };
       
