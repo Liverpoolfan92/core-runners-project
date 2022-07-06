@@ -1,31 +1,30 @@
-﻿//using ProjectAPI.Context;
-//using ProjectAPI.Data.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using ProjectAPI.Context;
+using ProjectAPI.Data.Models;
 
-//namespace ProjectAPI.Data
-//{
-//    public static class DataSeeder
-//    {
-//        public static void Seed(this IHost host)
-//        {
-//            using var scope = host.Services.CreateScope();
-//            using var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//            context.Database.EnsureCreated();
-//            AddSeat(context);
-//        }
-//        private static void AddSeat(AppDbContext context)
-//        {
-//            var user = context.Users.FirstOrDefault();
-//            if (user != null) return;
+namespace ProjectAPI.Data
+{
+    public static class DataSeeder
+    {
+        public static void Seed(this IHost host)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var AdminRole = new IdentityRole("Admin");
+                var UserRole = new IdentityRole("User");
+                var Admin = new User();
 
-//            context.Seats.Add(new Seat
-//            {
-//                Id = 0,
-//                Name = "Gay",
-//                Color  = "Gay"
-//            });
+                roleManager.CreateAsync(AdminRole);
+                roleManager.CreateAsync(UserRole);
+                userManager.CreateAsync(Admin);
 
-//            context.SaveChanges();
-//        }
-//    }
-//}
+            };
+      
+
+        }
+
+    }
+}
 
