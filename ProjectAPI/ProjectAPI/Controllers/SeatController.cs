@@ -3,6 +3,8 @@ using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
 
+//for admin page
+
 namespace ProjectAPI.Controllers
 {
     [ApiController]
@@ -32,7 +34,8 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        //.../Seat/1
+        //za update i create
+        //trqbva samo 1 entity da se vurne
         public IActionResult Get(int Id)
         {
             var testData = _DbContext.Seats.Single(x => x.Id == Id);
@@ -41,27 +44,31 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
-        //.../Seat/1
-        public IActionResult Get()
+        //all list entities
+        //za tablicata s vsichki seatove
+        public IActionResult List()
         {
             var testData = _DbContext.Seats.ToList();
 
             return Ok(testData);
         }
 
+
         [HttpPut]
         public IActionResult Update(UpdateSeatModel_DTO seat)
         {
             var testData = _DbContext.Seats.Single(x => x.Id == seat.Id);
+
+            if (testData == null)
+            {
+                return BadRequest();
+            }
 
             testData.Name = seat.Name;
             testData.Color = seat.Color;
 
             _DbContext.Seats.Update(testData);
             _DbContext.SaveChanges();
-
-            // _db update
-            // _db save chan
 
             return Ok();
         }
