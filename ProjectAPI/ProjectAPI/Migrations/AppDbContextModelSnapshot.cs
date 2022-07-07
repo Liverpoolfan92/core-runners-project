@@ -165,8 +165,8 @@ namespace ProjectAPI.Migrations
                     b.Property<int>("SeatId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("Time")
+                        .HasColumnType("date");
 
                     b.Property<string>("UserId")
                         .IsRequired()

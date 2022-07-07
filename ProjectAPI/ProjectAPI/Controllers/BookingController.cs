@@ -31,7 +31,18 @@ namespace ProjectAPI.Controllers
             _DbContext.SaveChanges();
 
             return Ok();
-            }
         }
+
+        [HttpGet]
+        public IActionResult List()
+        {
+            var testData = _DbContext.Bookings.ToList();
+
+            return Ok(testData);
+        }
+    }
+
+
+
 }
 
