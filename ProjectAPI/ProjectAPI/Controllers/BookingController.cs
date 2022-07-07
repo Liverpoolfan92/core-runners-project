@@ -16,7 +16,7 @@ namespace ProjectAPI.Controllers
             _DbContext = testDBContext;
         }
 
-        public static bool isFree(Booking booking, List<Booking> list)
+        public static bool IsFree(Booking booking, List<Booking> list)
         {
             foreach (Booking book in list)
             {
@@ -28,6 +28,8 @@ namespace ProjectAPI.Controllers
             return true;
 
         }
+
+
         [HttpPost]
         public IActionResult Create(AddBooking_DTO booking)
         {
@@ -43,7 +45,7 @@ namespace ProjectAPI.Controllers
                 .Where(book => book.Time.Date == booking.Time.Date)
                 .ToList();
 
-            if (!isFree(newBooking, query))
+            if (!IsFree(newBooking, query))
             {
                 return BadRequest();
             }
@@ -67,6 +69,14 @@ namespace ProjectAPI.Controllers
         [HttpDelete("{Id:int}")]
         public IActionResult Delete(int Id)
         {
+
+            var query = _DbContext.Bookings
+                .Where(book => book.Id == Id)
+                .ToList();
+
+            if(query.Count == 0) { 
+                return BadRequest();
+            }
             var testData = _DbContext.Bookings.Single(x => x.Id == Id);
 
             _DbContext.Bookings.Remove(testData);
