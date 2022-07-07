@@ -56,6 +56,15 @@ namespace ProjectAPI.Controllers
         [HttpGet("{Id:int}")]
         public IActionResult Get(int Id)
         {
+            var query = _DbContext.Seats
+                .Where(seat => seat.Id == Id)
+                .ToList();
+
+            if(query.Count <= 0)
+            { 
+                return BadRequest(); 
+            }
+
             var testData = _DbContext.Seats.Single(x => x.Id == Id);
 
             return Ok(testData);
@@ -64,6 +73,12 @@ namespace ProjectAPI.Controllers
         [HttpGet]
         public IActionResult List()
         {
+            var query = _DbContext.Seats.ToList();
+
+            if (query.Count <= 0)
+            {
+                return BadRequest();
+            }
             var testData = _DbContext.Seats.ToList();
 
             return Ok(testData);
