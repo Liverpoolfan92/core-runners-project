@@ -30,6 +30,11 @@ namespace ProjectAPI.Controllers
             _DbContext.Seats.Add(newSeat);
             _DbContext.SaveChanges();
 
+            /*var test = _DbContext.Bookings
+                .Where(x => x.Seat.Name == "sd")
+                .Select(x => x.Time)
+                .ToList();*/
+
             return Ok();
         }
 
@@ -72,5 +77,18 @@ namespace ProjectAPI.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("{Id:int}")]
+        public IActionResult Delete(int Id)
+        {
+            var testData = _DbContext.Seats.Single(x => x.Id == Id);
+
+            _DbContext.Seats.Remove(testData);
+            _DbContext.SaveChanges();
+
+            return Ok();
+        }
+
+
     }
 }

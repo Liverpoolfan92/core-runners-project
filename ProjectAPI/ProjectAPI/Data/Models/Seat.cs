@@ -12,6 +12,8 @@ namespace ProjectAPI.Data.Models
 
         public string? Color { get; set; }
 
+        public List<Booking> Bookings { get; set; }
+
         public Seat()
         {
 
