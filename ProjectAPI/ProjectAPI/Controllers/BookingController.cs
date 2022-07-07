@@ -16,9 +16,22 @@ namespace ProjectAPI.Controllers
             _DbContext = testDBContext;
         }
 
+        public static bool isFree(Booking booking, List<Booking> list)
+        {
+            foreach (Booking book in list)
+            {
+                if (book.Time.Date == booking.Time.Date && book.Seat == booking.Seat)
+                {
+                    return false;
+                }
+            }
+            return true;
+
+        }
         [HttpPost]
         public IActionResult Create(AddBooking_DTO booking)
         {
+
             var newBooking = new Booking()
             {
                 UserId = booking.UserId,
@@ -26,6 +39,14 @@ namespace ProjectAPI.Controllers
                 Time = booking.Time
 
             };
+            var query = _DbContext.Bookings
+                .Where(book => book.Time.Date == booking.Time.Date)
+                .ToList();
+
+            if (!isFree(newBooking, query))
+            {
+                return BadRequest();
+            }
 
             _DbContext.Bookings.Add(newBooking);
             _DbContext.SaveChanges();
@@ -33,12 +54,25 @@ namespace ProjectAPI.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        public IActionResult List()
+        [HttpGet("{dateTime:DateTime}")]
+        public IActionResult List(DateTime dateTime)
         {
-            var testData = _DbContext.Bookings.ToList();
+            var query = _DbContext.Seats
+                .Where(seat => !seat.Bookings.Any(booking => booking.Time.Date == dateTime.Date))
+                .ToList();
 
-            return Ok(testData);
+            return Ok(query);
+        }
+
+        [HttpDelete("{Id:int}")]
+        public IActionResult Delete(int Id)
+        {
+            var testData = _DbContext.Bookings.Single(x => x.Id == Id);
+
+            _DbContext.Bookings.Remove(testData);
+            _DbContext.SaveChanges();
+
+            return Ok();
         }
     }
 
