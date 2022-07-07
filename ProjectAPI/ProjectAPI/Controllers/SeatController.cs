@@ -18,6 +18,19 @@ namespace ProjectAPI.Controllers
             _DbContext = testDBContext;
         }
 
+        public static bool IsFree(Seat seat, List<Seat> list)
+        {
+            foreach (Seat s in list)
+            {
+                if (s.Name == seat.Name)
+                {
+                    return false;
+                }
+            }
+            return true;
+
+        }
+
         [HttpPost]
         public IActionResult Create(AddSeatModel_DTO seat)
         {
@@ -27,20 +40,20 @@ namespace ProjectAPI.Controllers
                 Color = seat.Color
             };
 
+            var query = _DbContext.Seats.ToList();
+
+            if (!IsFree(newSeat, query))
+            {
+                return BadRequest();
+            }
+
             _DbContext.Seats.Add(newSeat);
             _DbContext.SaveChanges();
-
-            /*var test = _DbContext.Bookings
-                .Where(x => x.Seat.Name == "sd")
-                .Select(x => x.Time)
-                .ToList();*/
 
             return Ok();
         }
 
         [HttpGet("{Id:int}")]
-        //za update i create
-        //trqbva samo 1 entity da se vurne
         public IActionResult Get(int Id)
         {
             var testData = _DbContext.Seats.Single(x => x.Id == Id);
@@ -49,8 +62,6 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
-        //all list entities
-        //za tablicata s vsichki seatove
         public IActionResult List()
         {
             var testData = _DbContext.Seats.ToList();
@@ -81,6 +92,15 @@ namespace ProjectAPI.Controllers
         [HttpDelete("{Id:int}")]
         public IActionResult Delete(int Id)
         {
+            var query = _DbContext.Seats
+                .Where(seat => seat.Id == Id)
+                .ToList();
+
+            if (query.Count == 0)
+            {
+                return BadRequest();
+            }
+
             var testData = _DbContext.Seats.Single(x => x.Id == Id);
 
             _DbContext.Seats.Remove(testData);

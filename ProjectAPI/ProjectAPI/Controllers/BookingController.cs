@@ -29,7 +29,6 @@ namespace ProjectAPI.Controllers
 
         }
 
-
         [HttpPost]
         public IActionResult Create(AddBooking_DTO booking)
         {
@@ -69,7 +68,6 @@ namespace ProjectAPI.Controllers
         [HttpDelete("{Id:int}")]
         public IActionResult Delete(int Id)
         {
-
             var query = _DbContext.Bookings
                 .Where(book => book.Id == Id)
                 .ToList();
