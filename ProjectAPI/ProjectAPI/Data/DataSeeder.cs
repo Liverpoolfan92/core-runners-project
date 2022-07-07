@@ -12,20 +12,22 @@ namespace ProjectAPI.Data
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                if (!roleManager.Roles.Any())
+                {
+                    var AdminRole = new IdentityRole("Admin");
+                    var UserRole = new IdentityRole("User");
+                    await roleManager.CreateAsync(AdminRole);
+                    await roleManager.CreateAsync(UserRole);
+                }
 
-                var AdminRole = new IdentityRole("Admin");
-                var UserRole = new IdentityRole("User");
+                if (!userManager.Users.Any())
+                {
+                    var Admin = new User("admin@mail.bg");
 
+                    await userManager.CreateAsync(Admin, "P@ssw0rd123");
 
-                await roleManager.CreateAsync(AdminRole);
-                await roleManager.CreateAsync(UserRole);
-
-                var Admin = new User("admin@mail.bg");
-
-
-                await userManager.CreateAsync(Admin, "P@ssw0rd123");
-
-                await userManager.AddToRoleAsync(Admin, "Admin");
+                    await userManager.AddToRoleAsync(Admin, "Admin");
+                }
 
             };
       
