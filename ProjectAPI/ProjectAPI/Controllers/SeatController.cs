@@ -18,7 +18,7 @@ namespace ProjectAPI.Controllers
             _DbContext = testDBContext;
         }
 
-        public static bool IsFree(Seat seat, List<Seat> list)
+        public static bool NameIsFree(Seat seat, List<Seat> list)
         {
             foreach (Seat s in list)
             {
@@ -28,7 +28,6 @@ namespace ProjectAPI.Controllers
                 }
             }
             return true;
-
         }
 
         [HttpPost]
@@ -42,9 +41,10 @@ namespace ProjectAPI.Controllers
 
             var query = _DbContext.Seats.ToList();
 
-            if (!IsFree(newSeat, query))
+            if (!NameIsFree(newSeat, query))
             {
-                return BadRequest();
+                ModelState.AddModelError("Name", "There is a seat with the same name, so you cant add this one");
+                return BadRequest(ModelState);
             }
 
             _DbContext.Seats.Add(newSeat);
@@ -61,8 +61,9 @@ namespace ProjectAPI.Controllers
                 .ToList();
 
             if(query.Count <= 0)
-            { 
-                return BadRequest(); 
+            {
+                ModelState.AddModelError("Id", "There is no seat with the given Id");
+                return BadRequest(ModelState); 
             }
 
             var testData = _DbContext.Seats.Single(x => x.Id == Id);
@@ -77,7 +78,8 @@ namespace ProjectAPI.Controllers
 
             if (query.Count <= 0)
             {
-                return BadRequest();
+                ModelState.AddModelError("", "There are no seats added");
+                return BadRequest(ModelState);
             }
             var testData = _DbContext.Seats.ToList();
 
@@ -88,18 +90,22 @@ namespace ProjectAPI.Controllers
         [HttpPut]
         public IActionResult Update(UpdateSeatModel_DTO seat)
         {
-            var testData = _DbContext.Seats.Single(x => x.Id == seat.Id);
-
-            if (testData == null)
+            try
             {
-                return BadRequest();
+                var testData = _DbContext.Seats.Single(x => x.Id == seat.Id);
+
+                testData.Name = seat.Name;
+                testData.Color = seat.Color;
+
+                _DbContext.Seats.Update(testData);
+                _DbContext.SaveChanges();
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("Id", "There is no seat with the given properties");
+                return BadRequest(ModelState);
             }
 
-            testData.Name = seat.Name;
-            testData.Color = seat.Color;
-
-            _DbContext.Seats.Update(testData);
-            _DbContext.SaveChanges();
 
             return Ok();
         }
@@ -113,7 +119,8 @@ namespace ProjectAPI.Controllers
 
             if (query.Count == 0)
             {
-                return BadRequest();
+                ModelState.AddModelError("Id", "There is no seat with the given Id");
+                return BadRequest(ModelState);
             }
 
             var testData = _DbContext.Seats.Single(x => x.Id == Id);

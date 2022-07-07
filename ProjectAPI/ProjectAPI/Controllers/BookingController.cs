@@ -29,6 +29,22 @@ namespace ProjectAPI.Controllers
 
         }
 
+        public static bool IsValid(Booking booking,List<User>users, List<Seat> seats)
+        {
+            int flag = 0;
+            foreach(User user in users)
+            {
+                if(user.Id == booking.UserId) { flag++; }
+            }
+            
+            foreach(Seat seat in seats)
+            {
+                if(seat.Id == booking.SeatId) { flag++; }   
+            }
+            if(flag == 2) { return true; }
+            return false;
+        }
+
         [HttpPost]
         public IActionResult Create(AddBooking_DTO booking)
         {
@@ -40,13 +56,24 @@ namespace ProjectAPI.Controllers
                 Time = booking.Time
 
             };
+
+            var usersquery = _DbContext.Users.ToList();
+            var seatsquery = _DbContext.Seats.ToList();
+
             var query = _DbContext.Bookings
                 .Where(book => book.Time.Date == booking.Time.Date)
                 .ToList();
 
+            if (!IsValid(newBooking, usersquery, seatsquery))
+            {
+                ModelState.AddModelError("Id","The booking seat_id or user_id is invaild");
+                return BadRequest(ModelState);
+            }
+
             if (!IsFree(newBooking, query))
             {
-                return BadRequest();
+                ModelState.AddModelError("SeatId", "The Sead is allready booked for this date");
+                return BadRequest(ModelState);
             }
 
             _DbContext.Bookings.Add(newBooking);
@@ -72,8 +99,9 @@ namespace ProjectAPI.Controllers
                 .Where(book => book.Id == Id)
                 .ToList();
 
-            if(query.Count == 0) { 
-                return BadRequest();
+            if(query.Count == 0) {
+                ModelState.AddModelError("Id", "There is no booking with this Id");
+                return BadRequest(ModelState);
             }
             var testData = _DbContext.Bookings.Single(x => x.Id == Id);
 
