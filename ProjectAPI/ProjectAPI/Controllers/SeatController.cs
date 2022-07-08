@@ -74,13 +74,13 @@ namespace ProjectAPI.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            var query = _DbContext.Seats.ToList();
+            //var query = _DbContext.Seats.ToList();
 
-            if (query.Count <= 0)
-            {
-                ModelState.AddModelError("", "There are no seats added");
-                return BadRequest(ModelState);
-            }
+            //if (query.Count <= 0)
+            //{
+            //    ModelState.AddModelError("", "There are no seats added");
+            //    return BadRequest(ModelState);
+            //}
             var testData = _DbContext.Seats.ToList();
 
             return Ok(testData);
