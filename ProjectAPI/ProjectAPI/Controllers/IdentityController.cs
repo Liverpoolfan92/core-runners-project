@@ -24,34 +24,6 @@ namespace ProjectAPI.Controllers
 
         }
         
-        //private readonly AppDbContext _DbContext;
-
-        //  public IdentityController(AppDbContext testDBContext)
-        //  {
-        //      _DbContext = testDBContext;
-        //  }
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateUser(CreateUserInputModel input)
-        //{
-        //    var newUser = new User(input.Name)
-        //    {
-        //        UserName = input.Name,
-        //        PasswordHash = input.Password,
-        //        Email = input.Email
-
-        //    };
-
-        //    //var identityResult = await this._userManager.CreateAsync(user, input.Password);
-
-
-        //    _DbContext.Users.Add(newUser);
-        //    _DbContext.SaveChanges();
-
-        //   return Ok();
-
-        //}
-
         [HttpPost]
         public async Task<IActionResult> Login (LoginModel input) {
             var user = await this._userManager.FindByNameAsync(input.Email);
