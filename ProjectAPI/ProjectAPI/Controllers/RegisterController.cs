@@ -24,7 +24,8 @@ namespace ProjectAPI.Controllers
             {
                 UserName = input.Name,
                 PasswordHash = input.Password,
-                Email = input.Email
+                Email = input.Email,
+                NormalizedUserName = input.Email.ToUpper()
 
             };
 

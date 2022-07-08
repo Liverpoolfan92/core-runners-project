@@ -26,17 +26,17 @@ namespace ProjectAPI.Controllers
         
         [HttpPost]
         public async Task<IActionResult> Login (LoginModel input) {
-            var user = await this._userManager.FindByNameAsync(input.Email);
+            var user = await _userManager.FindByNameAsync(input.Email);
             if (user == null)
             {
                 return BadRequest(); 
             }
 
-            var passwordValid = await this._userManager.CheckPasswordAsync(user, input.Password);
-            if (!passwordValid)
-            {
-                return BadRequest() ;
-            }
+            //var passwordValid = await this._userManager.CheckPasswordAsync(user, input.Password);
+            //if (!passwordValid)
+            //{
+            //    return BadRequest() ;
+            //}
             
             return Ok();
 
