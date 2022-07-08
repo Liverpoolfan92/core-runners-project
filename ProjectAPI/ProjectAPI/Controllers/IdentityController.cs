@@ -11,51 +11,49 @@ namespace ProjectAPI.Controllers
     [ApiController]
     public class IdentityController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
 
         public IdentityController(
-            UserManager<IdentityUser> userManager,
+            UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
 
         }
+        
+        //private readonly AppDbContext _DbContext;
+
+        //  public IdentityController(AppDbContext testDBContext)
+        //  {
+        //      _DbContext = testDBContext;
+        //  }
+
+        //[HttpPost]
+        //public async Task<IActionResult> CreateUser(CreateUserInputModel input)
+        //{
+        //    var newUser = new User(input.Name)
+        //    {
+        //        UserName = input.Name,
+        //        PasswordHash = input.Password,
+        //        Email = input.Email
+
+        //    };
+
+        //    //var identityResult = await this._userManager.CreateAsync(user, input.Password);
 
 
+        //    _DbContext.Users.Add(newUser);
+        //    _DbContext.SaveChanges();
 
-        private readonly AppDbContext _DbContext;
+        //   return Ok();
 
-        public IdentityController(AppDbContext testDBContext)
-        {
-            _DbContext = testDBContext;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CreateUser(CreateUserInputModel input)
-        {
-            var newUser = new User(input.Name)
-            {
-                UserName = input.Name,
-                PasswordHash = input.Password,
-                Email = input.Email
-
-            };
-
-            //var identityResult = await this._userManager.CreateAsync(user, input.Password);
-
-
-            _DbContext.Users.Add(newUser);
-            _DbContext.SaveChanges();
-
-            return Ok();
-
-        }
+        //}
 
         [HttpPost]
-        public async AcceptedResult Chek (LoginModel input) {
+        public async Task<IActionResult> Login (LoginModel input) {
             var user = await this._userManager.FindByNameAsync(input.Email);
             if (user == null)
             {
@@ -65,9 +63,10 @@ namespace ProjectAPI.Controllers
             var passwordValid = await this._userManager.CheckPasswordAsync(user, input.Password);
             if (!passwordValid)
             {
-                return  ;
+                return BadRequest() ;
             }
-            return ;
+            
+            return Ok();
 
         }
 
