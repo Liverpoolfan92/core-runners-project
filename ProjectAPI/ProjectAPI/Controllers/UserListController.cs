@@ -10,12 +10,10 @@ namespace ProjectAPI.Controllers
     public class UserListController : Controller
     {
         private readonly AppDbContext _DbContext;
-        private readonly UserManager<User> _userManager;
 
-        public UserListController(AppDbContext testDBContext, UserManager<User> userManager)
+        public UserListController(AppDbContext testDBContext)
         {
             _DbContext = testDBContext;
-            _userManager = userManager;
         }
 
         [HttpGet]
@@ -24,6 +22,27 @@ namespace ProjectAPI.Controllers
             var testData = _DbContext.Users.ToList();
 
             return Ok(testData);
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(string Id)
+        {
+            var query = _DbContext.Users
+                .Where(user => user.Id == Id)
+                .ToList();
+
+            if (query.Count == 0)
+            {
+                ModelState.AddModelError("Id", "There is no seat with the given Id");
+                return BadRequest(ModelState);
+            }
+
+            var testData = _DbContext.Users.Single(x => x.Id == Id);
+
+            _DbContext.Users.Remove(testData);
+            _DbContext.SaveChanges();
+
+            return Ok();
         }
     }
 }
