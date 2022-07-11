@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
+using ProjectAPI.Hubs;
 using ProjectAPI.Models;
 
 //for admin page
@@ -12,12 +14,15 @@ namespace ProjectAPI.Controllers
     public class SeatController : Controller
     {
         private readonly AppDbContext _DbContext;
+        private readonly IHubContext<SignalHub> _hubContext; 
 
-        public SeatController(AppDbContext testDBContext)
+        public SeatController(AppDbContext testDBContext, IHubContext<SignalHub> hubContext)
         {
             _DbContext = testDBContext;
+            _hubContext = hubContext;
         }
 
+        //part of error handling
         public static bool NameIsFree(Seat seat, List<Seat> list)
         {
             foreach (Seat s in list)
@@ -29,6 +34,9 @@ namespace ProjectAPI.Controllers
             }
             return true;
         }
+
+        //signaR
+
 
         [HttpPost]
         public IActionResult Create(AddSeatModel_DTO seat)
@@ -46,9 +54,11 @@ namespace ProjectAPI.Controllers
                 ModelState.AddModelError("Name", "There is a seat with the same name, so you cant add this one");
                 return BadRequest(ModelState);
             }
-
+             
             _DbContext.Seats.Add(newSeat);
             _DbContext.SaveChanges();
+
+            _hubContext.Clients.All.SendAsync("ReceiveSeat", newSeat);
 
             return Ok();
         }

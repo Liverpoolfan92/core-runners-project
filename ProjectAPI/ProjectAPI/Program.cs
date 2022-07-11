@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Context;
 using ProjectAPI.Data;
 using ProjectAPI.Data.Models;
+using ProjectAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 builder.Services
     .AddDbContextPool<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -41,5 +43,7 @@ app.UseAuthentication();
 app.MapControllers();
 
 app.Seed();
+
+app.MapHub<SignalHub>("/signalhub");
 
 app.Run();
