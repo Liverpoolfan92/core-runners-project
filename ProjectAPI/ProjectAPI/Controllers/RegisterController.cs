@@ -44,7 +44,7 @@ namespace ProjectAPI.Controllers
         [HttpPost]
         public IActionResult CreateUser(CreateUserInputModel input)
         {
-            var newUser = new User(input.Email);
+            var newUser = new User(input.Name);
             newUser.Email = input.Email;
             newUser.NormalizedEmail = newUser.Email.Normalize().ToUpper();
             newUser.NormalizedUserName = newUser.UserName.Normalize().ToUpper();

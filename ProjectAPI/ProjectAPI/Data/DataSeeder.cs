@@ -22,7 +22,9 @@ namespace ProjectAPI.Data
 
                 if (!userManager.Users.Any())
                 {
-                    var Admin = new User("admin@mail.bg");
+                    var Admin = new User("Admin");
+                    Admin.Email = "admin@mail.bg";
+                    Admin.NormalizedEmail = Admin.Email.Normalize().ToUpper();
 
                     await userManager.CreateAsync(Admin, "P@ssw0rd123");
 

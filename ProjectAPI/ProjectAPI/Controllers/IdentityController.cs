@@ -26,7 +26,7 @@ namespace ProjectAPI.Controllers
         
         [HttpPost]
         public async Task<IActionResult> Login (LoginModel input) {
-            var user = await _userManager.FindByNameAsync(input.Email);
+            var user = await _userManager.FindByEmailAsync(input.Email);
             if (user == null)
             {
                 ModelState.AddModelError("", "Error in email check");
