@@ -29,14 +29,16 @@ namespace ProjectAPI.Controllers
             var user = await _userManager.FindByNameAsync(input.Email);
             if (user == null)
             {
-                return BadRequest(); 
+                ModelState.AddModelError("", "Error in email check");
+                return BadRequest(ModelState);
             }
 
-            //var passwordValid = await this._userManager.CheckPasswordAsync(user, input.Password);
-            //if (!passwordValid)
-            //{
-            //    return BadRequest() ;
-            //}
+            var passwordValid = await this._userManager.CheckPasswordAsync(user, input.Password);
+            if (!passwordValid)
+            {
+                ModelState.AddModelError("", "Error in password");
+                return BadRequest(ModelState);
+            }
             
             return Ok();
 

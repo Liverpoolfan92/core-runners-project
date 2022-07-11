@@ -40,6 +40,6 @@ app.UseAuthentication();
 
 app.MapControllers();
 
-app.Seed();
+await app.Seed();
 
 app.Run();
