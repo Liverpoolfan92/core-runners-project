@@ -5,6 +5,8 @@ namespace ProjectAPI.Hubs
 {
     public class SignalHub : Hub
     {
+
+        //wp = workplace
         public void BroadcastSeat(Seat wp)
         {
             Clients.All.SendAsync("ReceiveSeat", wp);
