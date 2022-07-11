@@ -45,6 +45,8 @@ namespace ProjectAPI.Controllers
         public IActionResult CreateUser(CreateUserInputModel input)
         {
             var newUser = new User(input.Email);
+            newUser.Email = input.Email;
+            newUser.NormalizedEmail = newUser.Email.Normalize().ToUpper();
             newUser.NormalizedUserName = newUser.UserName.Normalize().ToUpper();
             newUser.PasswordHash = HashPassword(input.Password);
 
