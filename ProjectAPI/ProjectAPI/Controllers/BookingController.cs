@@ -2,6 +2,7 @@
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
+using System.Net;
 
 namespace ProjectAPI.Controllers
 {
@@ -83,6 +84,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{dateTime:DateTime}")]
+        [ProducesResponseType(typeof(List<Booking>), (int)HttpStatusCode.OK)]
         public IActionResult List(DateTime dateTime)
         {
             var query = _DbContext.Seats

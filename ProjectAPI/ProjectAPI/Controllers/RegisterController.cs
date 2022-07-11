@@ -5,7 +5,7 @@ using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
 using System.Security.Cryptography;
-
+using Microsoft.AspNetCore.Http;
 namespace ProjectAPI.Controllers
 {
     [Route("[controller]")]
@@ -41,14 +41,35 @@ namespace ProjectAPI.Controllers
             return Convert.ToBase64String(dst);
         }
 
+        public static bool Valid(List<User> users, User CUser)
+        {
+
+            foreach (User user in users)
+            {
+                if (user.NormalizedUserName == CUser.NormalizedUserName) { return false; }
+
+            }
+
+            return true;
+
+        }
+
         [HttpPost]
         public IActionResult CreateUser(CreateUserInputModel input)
         {
-            var newUser = new User(input.Email);
+            var newUser = new User(input.Name);
             newUser.Email = input.Email;
             newUser.NormalizedEmail = newUser.Email.Normalize().ToUpper();
             newUser.NormalizedUserName = newUser.UserName.Normalize().ToUpper();
             newUser.PasswordHash = HashPassword(input.Password);
+
+            var usersquery = _DbContext.Users.ToList();
+            if (Valid(usersquery, newUser) == false)
+            {
+                ModelState.AddModelError("Name", "there is alrady user with the same email");
+                return BadRequest(ModelState);
+            }
+            
 
             _DbContext.Users.Add(newUser);
             _DbContext.SaveChanges();
