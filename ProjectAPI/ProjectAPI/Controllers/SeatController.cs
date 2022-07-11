@@ -4,7 +4,6 @@ using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Hubs;
 using ProjectAPI.Models;
-using System.Net;
 
 //for admin page
 
@@ -65,7 +64,6 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        [ProducesResponseType(typeof(Seat), (int)HttpStatusCode.OK)]
         public IActionResult Get(int Id)
         {
             var query = _DbContext.Seats
@@ -84,7 +82,6 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<Seat>), (int)HttpStatusCode.OK)]
         public IActionResult List()
         {
             //var query = _DbContext.Seats.ToList();
