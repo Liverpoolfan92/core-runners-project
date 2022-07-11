@@ -22,7 +22,16 @@ builder.Services
     .AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+});
 var app = builder.Build();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -39,6 +48,13 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthentication();
+app.UseCors(builder =>
+{
+    builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader();
+});
 
 app.MapControllers();
 
