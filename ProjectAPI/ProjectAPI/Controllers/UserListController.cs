@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
+using System.Net;
 
 namespace ProjectAPI.Controllers
 {
@@ -16,7 +17,19 @@ namespace ProjectAPI.Controllers
             _DbContext = testDBContext;
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
+        public IActionResult Get(string id)
+        {
+            var testData = _DbContext.Users
+                .Where(User => User.Id == id)
+                .FirstOrDefault();
+
+            return Ok(testData);
+        }
+
         [HttpGet]
+        [ProducesResponseType(typeof(List<User>), (int)HttpStatusCode.OK)]
         public IActionResult List()
         {
             var testData = _DbContext.Users.ToList();
