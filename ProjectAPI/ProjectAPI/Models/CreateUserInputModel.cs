@@ -12,7 +12,7 @@ namespace ProjectAPI.Models
         public string Password { get; set; } = default!;
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
+using System.Security.Cryptography;
 
 namespace ProjectAPI.Controllers
 {
@@ -20,26 +21,39 @@ namespace ProjectAPI.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserInputModel input)
+
+        public static string HashPassword(string password)
         {
-            var newUser = new User(input.Name)
+            byte[] salt;
+            byte[] buffer2;
+            if (password == null)
             {
-                UserName = input.Name,
-                PasswordHash = input.Password,
-                Email = input.Email,
-                //NormalizedUserName = input.Email.ToUpper()
+                throw new ArgumentNullException("password");
+            }
+            using (Rfc2898DeriveBytes bytes = new Rfc2898DeriveBytes(password, 0x10, 0x3e8))
+            {
+                salt = bytes.Salt;
+                buffer2 = bytes.GetBytes(0x20);
+            }
+            byte[] dst = new byte[0x31];
+            Buffer.BlockCopy(salt, 0, dst, 1, 0x10);
+            Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
+            return Convert.ToBase64String(dst);
+        }
 
-            };
-
-            var identityResult = await this._userManager.CreateAsync(newUser, input.Password);
-
+        [HttpPost]
+        public IActionResult CreateUser(CreateUserInputModel input)
+        {
+            var newUser = new User(input.Email);
+            newUser.NormalizedUserName = newUser.UserName.Normalize().ToUpper();
+            newUser.PasswordHash = HashPassword(input.Password);
 
             _DbContext.Users.Add(newUser);
             _DbContext.SaveChanges();
+            //_DbContext.Users.Add(newUser);
 
            return Ok();
-
         }
+
     }
 }

@@ -42,7 +42,7 @@ app.UseAuthentication();
 
 app.MapControllers();
 
-app.Seed();
+await app.Seed();
 
 app.MapHub<SignalHub>("/signalhub");
 
