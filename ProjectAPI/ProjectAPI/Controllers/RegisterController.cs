@@ -42,7 +42,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserInputModel input)
+        public IActionResult CreateUser(CreateUserInputModel input)
         {
             var newUser = new User(input.Email);
             newUser.NormalizedUserName = newUser.UserName.Normalize().ToUpper();
@@ -51,10 +51,9 @@ namespace ProjectAPI.Controllers
             _DbContext.Users.Add(newUser);
             _DbContext.SaveChanges();
             //_DbContext.Users.Add(newUser);
-            
 
            return Ok();
-
         }
+
     }
 }
