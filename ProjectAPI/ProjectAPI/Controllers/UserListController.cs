@@ -36,7 +36,7 @@ namespace ProjectAPI.Controllers
 
             if (query.Count <= 0)
             {
-                ModelState.AddModelError("Id", "There is no seat with the given Id");
+                ModelState.AddModelError("Id", "There is no user with the given Id");
                 return BadRequest(ModelState);
             }
 
@@ -55,7 +55,7 @@ namespace ProjectAPI.Controllers
 
             if (query.Count == 0)
             {
-                ModelState.AddModelError("Id", "There is no booking with this Id");
+                ModelState.AddModelError("Id", "There is no user with this Id");
                 return BadRequest(ModelState);
             }
             var testData = _DbContext.Users.Single(x => x.Id == Id);
