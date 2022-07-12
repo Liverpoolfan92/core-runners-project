@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
@@ -46,6 +47,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create(AddBooking_DTO booking)
         {
 
@@ -83,6 +85,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{dateTime:DateTime}")]
+        [Authorize]
         public IActionResult List(DateTime dateTime)
         {
             var query = _DbContext.Seats
@@ -93,6 +96,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
+        [Authorize]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Bookings

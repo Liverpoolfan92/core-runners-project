@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
@@ -42,6 +43,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateUser(CreateUserInputModel input)
         {
             var newUser = new User(input.Email);
@@ -52,12 +54,12 @@ namespace ProjectAPI.Controllers
 
             _DbContext.Users.Add(newUser);
             _DbContext.SaveChanges();
-            //_DbContext.Users.Add(newUser);
 
            return Ok();
         }
 
         [HttpPut("image")]
+        [Authorize]
         public IActionResult UpdateImage(Uri image,string id)
         {
             try
@@ -78,6 +80,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("phone")]
+        [Authorize]
         public IActionResult UpdatePhone(string phone, string id)
         {
             try
@@ -98,6 +101,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("age:int")]
+        [Authorize]
         public IActionResult UpdateAge(int age, string id)
         {
             try
@@ -118,6 +122,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("email")]
+        [Authorize]
         public IActionResult UpdateEmail(string email, string id)
         {
             try
