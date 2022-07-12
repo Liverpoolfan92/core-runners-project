@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ProjectAPI.Context;
@@ -40,7 +41,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPost]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Create(AddSeatModel_DTO seat)
         {
             var newSeat = new Seat()
@@ -66,7 +67,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Get(int Id)
         {
             var query = _DbContext.Seats
@@ -85,7 +86,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult List()
         {
             //var query = _DbContext.Seats.ToList();
@@ -102,7 +103,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPut]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Update(UpdateSeatModel_DTO seat)
         {
             try
@@ -126,7 +127,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Seats

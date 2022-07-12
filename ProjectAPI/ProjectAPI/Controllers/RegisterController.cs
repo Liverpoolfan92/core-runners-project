@@ -57,7 +57,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("image")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdateImage(Uri image,string id)
         {
             try
@@ -78,7 +78,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("phone")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdatePhone(string phone, string id)
         {
             try
@@ -99,7 +99,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("age")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdateAge(int age, string id)
         {
             try
@@ -120,7 +120,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("email")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdateEmail(string email, string id)
         {
             try
@@ -142,7 +142,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("position")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdatePosition(string position, string id)
         {
             try

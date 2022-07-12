@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
@@ -47,7 +48,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Create(AddBooking_DTO booking)
         {
 
@@ -85,7 +86,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{dateTime:DateTime}")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult List(DateTime dateTime)
         {
             var query = _DbContext.Seats
@@ -96,7 +97,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Bookings
