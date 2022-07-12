@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Context;
 using ProjectAPI.Data;
 using ProjectAPI.Data.Models;
+using ProjectAPI.Extensions;
 using ProjectAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
