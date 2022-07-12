@@ -57,5 +57,86 @@ namespace ProjectAPI.Controllers
            return Ok();
         }
 
+        [HttpPut("image")]
+        public IActionResult UpdateImage(Uri image,string id)
+        {
+            try
+            {
+                var testData = _DbContext.Users.Single(x => x.Id == id);
+
+                testData.Image  = image;
+
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("Id", "There is no user with the given properties");
+                return BadRequest(ModelState);
+            }
+            return Ok();
+        }
+
+        [HttpPut("phone")]
+        public IActionResult UpdatePhone(string phone, string id)
+        {
+            try
+            {
+                var testData = _DbContext.Users.Single(x => x.Id == id);
+
+                testData.PhoneNumber = phone;
+
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("Id", "There is no user with the given properties");
+                return BadRequest(ModelState);
+            }
+            return Ok();
+        }
+
+        [HttpPut("age:int")]
+        public IActionResult UpdateAge(int age, string id)
+        {
+            try
+            {
+                var testData = _DbContext.Users.Single(x => x.Id == id);
+
+                testData.Age = age;
+
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("Id", "There is no user with the given properties");
+                return BadRequest(ModelState);
+            }
+            return Ok();
+        }
+
+        [HttpPut("email")]
+        public IActionResult UpdateEmail(string email, string id)
+        {
+            try
+            {
+                var testData = _DbContext.Users.Single(x => x.Id == id);
+
+                testData.Email= email;
+                testData.NormalizedEmail = email.Normalize().ToUpper();
+
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("Id", "There is no user with the given properties");
+                return BadRequest(ModelState);
+            }
+            return Ok();
+        }
+
     }
 }
