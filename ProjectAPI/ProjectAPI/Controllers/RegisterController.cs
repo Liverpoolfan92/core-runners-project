@@ -43,23 +43,20 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        public IActionResult CreateUser(CreateUserInputModel input)
+        //[Authorize]
+        public async Task<IActionResult> CreateUser(CreateUserInputModel input)
         {
-            var newUser = new User(input.Email);
+            var newUser = new User(input.Name);
             newUser.Email = input.Email;
-            newUser.NormalizedEmail = newUser.Email.Normalize().ToUpper();
-            newUser.NormalizedUserName = newUser.UserName.Normalize().ToUpper();
-            newUser.PasswordHash = HashPassword(input.Password);
 
-            _DbContext.Users.Add(newUser);
-            _DbContext.SaveChanges();
-
-           return Ok();
+            var tmp1 =  await _userManager.CreateAsync(newUser,input.Password);
+            //var tmp2 = await _userManager.AddToRoleAsync(newUser,"User");
+            
+            return Ok();
         }
 
         [HttpPut("image")]
-        [Authorize]
+        //[Authorize]
         public IActionResult UpdateImage(Uri image,string id)
         {
             try
@@ -80,7 +77,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("phone")]
-        [Authorize]
+        //[Authorize]
         public IActionResult UpdatePhone(string phone, string id)
         {
             try
@@ -101,7 +98,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("age")]
-        [Authorize]
+        //[Authorize]
         public IActionResult UpdateAge(int age, string id)
         {
             try
@@ -122,7 +119,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("email")]
-        [Authorize]
+        //[Authorize]
         public IActionResult UpdateEmail(string email, string id)
         {
             try
@@ -144,7 +141,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("position")]
-        [Authorize]
+        //[Authorize]
         public IActionResult UpdatePosition(string position, string id)
         {
             try

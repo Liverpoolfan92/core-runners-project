@@ -25,5 +25,23 @@ namespace ProjectAPI.Controllers
 
             return Ok(testData);
         }
+
+        [HttpGet("{Id}")]
+        public IActionResult Get(string Id)
+        {
+            var query = _DbContext.Users
+                .Where(user => user.Id == Id)
+                .ToList();
+
+            if (query.Count <= 0)
+            {
+                ModelState.AddModelError("Id", "There is no seat with the given Id");
+                return BadRequest(ModelState);
+            }
+
+            var testData = _DbContext.Users.Single(x => x.Id == Id);
+
+            return Ok(testData);
+        }
     }
 }

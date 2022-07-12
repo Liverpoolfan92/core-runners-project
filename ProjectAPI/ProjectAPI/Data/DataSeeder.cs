@@ -15,9 +15,7 @@ namespace ProjectAPI.Data
                 if (!roleManager.Roles.Any())
                 {
                     var AdminRole = new IdentityRole("Admin");
-                    var UserRole = new IdentityRole("User");
                     await roleManager.CreateAsync(AdminRole);
-                    await roleManager.CreateAsync(UserRole);
                 }
 
                 if (!userManager.Users.Any())

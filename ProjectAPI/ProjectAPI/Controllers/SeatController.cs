@@ -40,7 +40,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public IActionResult Create(AddSeatModel_DTO seat)
         {
             var newSeat = new Seat()
@@ -100,7 +100,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPut]
-        [Authorize]
+        //[Authorize]
         public IActionResult Update(UpdateSeatModel_DTO seat)
         {
             try
@@ -124,7 +124,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        [Authorize]
+        //[Authorize]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Seats
