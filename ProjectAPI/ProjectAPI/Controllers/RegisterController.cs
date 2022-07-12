@@ -100,7 +100,7 @@ namespace ProjectAPI.Controllers
             return Ok();
         }
 
-        [HttpPut("age:int")]
+        [HttpPut("age")]
         [Authorize]
         public IActionResult UpdateAge(int age, string id)
         {
