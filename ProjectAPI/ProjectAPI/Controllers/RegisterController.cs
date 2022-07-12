@@ -143,5 +143,26 @@ namespace ProjectAPI.Controllers
             return Ok();
         }
 
+        [HttpPut("position")]
+        [Authorize]
+        public IActionResult UpdatePosition(string position, string id)
+        {
+            try
+            {
+                var testData = _DbContext.Users.Single(x => x.Id == id);
+
+                testData.Position = position;
+
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
+            }
+            catch (InvalidOperationException)
+            {
+                ModelState.AddModelError("Id", "There is no user with the given properties");
+                return BadRequest(ModelState);
+            }
+            return Ok();
+        }
+
     }
 }
