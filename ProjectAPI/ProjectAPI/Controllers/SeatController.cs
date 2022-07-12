@@ -66,6 +66,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
+        //[Authorize]
         public IActionResult Get(int Id)
         {
             var query = _DbContext.Seats
@@ -84,6 +85,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
+        //[Authorize]
         public IActionResult List()
         {
             //var query = _DbContext.Seats.ToList();
