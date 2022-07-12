@@ -40,7 +40,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public IActionResult Create(AddSeatModel_DTO seat)
         {
             var newSeat = new Seat()
@@ -66,6 +66,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
+        //[Authorize]
         public IActionResult Get(int Id)
         {
             var query = _DbContext.Seats
@@ -84,6 +85,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
+        //[Authorize]
         public IActionResult List()
         {
             //var query = _DbContext.Seats.ToList();
@@ -100,7 +102,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPut]
-        [Authorize]
+        //[Authorize]
         public IActionResult Update(UpdateSeatModel_DTO seat)
         {
             try
@@ -124,7 +126,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        [Authorize]
+        //[Authorize]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Seats

@@ -47,7 +47,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public IActionResult Create(AddBooking_DTO booking)
         {
 
@@ -85,7 +85,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{dateTime:DateTime}")]
-        [Authorize]
+        //[Authorize]
         public IActionResult List(DateTime dateTime)
         {
             var query = _DbContext.Seats
@@ -96,7 +96,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        [Authorize]
+        //[Authorize]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Bookings

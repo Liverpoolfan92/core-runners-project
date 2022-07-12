@@ -21,6 +21,7 @@ builder.Services
 
 builder.Services
     .AddIdentity<User, IdentityRole>()
+    //.AddUserManager<UserManager<User>>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddCors(options =>
