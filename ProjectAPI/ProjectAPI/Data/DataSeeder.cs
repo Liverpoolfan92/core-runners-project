@@ -20,7 +20,8 @@ namespace ProjectAPI.Data
 
                 if (!userManager.Users.Any())
                 {
-                    var Admin = new User("admin@mail.bg");
+                    var Admin = new User("admin");
+                    Admin.Email = "admin@mail.bg";
 
                     await userManager.CreateAsync(Admin, "P@ssw0rd123");
 

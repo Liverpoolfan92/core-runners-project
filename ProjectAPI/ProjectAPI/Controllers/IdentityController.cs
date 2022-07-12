@@ -30,15 +30,19 @@ namespace ProjectAPI.Controllers
         }
 
 
-        private string CreateToken(User user) 
+        private string CreateToken(User user)
         {
-            List<Claim> claims = new List<Claim>
+            var claims = new[]
             {
-                new Claim(ClaimTypes.PrimaryGroupSid,user.Id )
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                
             };
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
+                issuer: _configuration.GetSection("Jwt:Issuer").Value,
+                audience: _configuration.GetSection("Jwt:Audience").Value,
                 claims: claims, 
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: cred);
@@ -50,7 +54,7 @@ namespace ProjectAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login (LoginModel input) {
-            var user = await _userManager.FindByNameAsync(input.Email);
+            var user = await _userManager.FindByEmailAsync(input.Email);
             if (user == null)
             {
                 ModelState.AddModelError("", "Error in email check");
@@ -63,7 +67,7 @@ namespace ProjectAPI.Controllers
                 ModelState.AddModelError("", "Error in password");
                 return BadRequest(ModelState);
             }
-            string token = CreateToken(user);
+            var token = CreateToken(user);
             return Ok(token);
 
         }
