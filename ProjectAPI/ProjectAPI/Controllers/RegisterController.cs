@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace ProjectAPI.Controllers
@@ -44,6 +45,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
+        [Route("{Usermodel}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateUser(CreateUserInputModel input)
         {
@@ -58,16 +60,22 @@ namespace ProjectAPI.Controllers
 
         [HttpPut("image")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult UpdateImage(Uri image,string id)
+        public IActionResult UpdateImage(Uri image)
         {
             try
             {
-                var testData = _DbContext.Users.Single(x => x.Id == id);
+                var user = User.Identity.IsAuthenticated;
 
-                testData.Image  = image;
+                if (user)
+                {
+                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var testData = _DbContext.Users.Single(x => x.Id == userid);
 
-                _DbContext.Users.Update(testData);
-                _DbContext.SaveChanges();
+                    testData.Image = image;
+
+                    _DbContext.Users.Update(testData);
+                    _DbContext.SaveChanges();
+                }
             }
             catch (InvalidOperationException)
             {
@@ -79,16 +87,22 @@ namespace ProjectAPI.Controllers
 
         [HttpPut("phone")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult UpdatePhone(string phone, string id)
+        public IActionResult UpdatePhone(string phone)
         {
             try
             {
-                var testData = _DbContext.Users.Single(x => x.Id == id);
+                var user = User.Identity.IsAuthenticated;
 
-                testData.PhoneNumber = phone;
+                if (user)
+                {
+                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var testData = _DbContext.Users.Single(x => x.Id == userid);
 
-                _DbContext.Users.Update(testData);
-                _DbContext.SaveChanges();
+                    testData.PhoneNumber = phone;
+
+                    _DbContext.Users.Update(testData);
+                    _DbContext.SaveChanges();
+                }
             }
             catch (InvalidOperationException)
             {
@@ -100,16 +114,27 @@ namespace ProjectAPI.Controllers
 
         [HttpPut("age")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult UpdateAge(int age, string id)
+        public IActionResult UpdateAge(int age)
         {
             try
             {
-                var testData = _DbContext.Users.Single(x => x.Id == id);
+                var user = User.Identity.IsAuthenticated;
+                if (user)
+                {
+                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var testData = _DbContext.Users.Single(x => x.Id == userid);
 
-                testData.Age = age;
+                    testData.Age = age;
 
-                _DbContext.Users.Update(testData);
-                _DbContext.SaveChanges();
+                    _DbContext.Users.Update(testData);
+                    _DbContext.SaveChanges();
+                }
+                else
+                {
+                    ModelState.AddModelError("Id", "Not Authorized");
+                    return BadRequest(ModelState);
+                }
+
             }
             catch (InvalidOperationException)
             {
@@ -121,17 +146,20 @@ namespace ProjectAPI.Controllers
 
         [HttpPut("email")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult UpdateEmail(string email, string id)
+        public IActionResult UpdateEmail(string email)
         {
-            try
-            {
-                var testData = _DbContext.Users.Single(x => x.Id == id);
+            try{
+                var user = User.Identity.IsAuthenticated;
+                if (user)
+                {
+                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var testData = _DbContext.Users.Single(x => x.Id == userid);
 
-                testData.Email= email;
-                testData.NormalizedEmail = email.Normalize().ToUpper();
+                    testData.Email = email;
 
-                _DbContext.Users.Update(testData);
-                _DbContext.SaveChanges();
+                    _DbContext.Users.Update(testData);
+                    _DbContext.SaveChanges();
+                }
             }
             catch (InvalidOperationException)
             {
@@ -142,17 +170,22 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("position")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult UpdatePosition(string position, string id)
+         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult UpdatePosition(string position)
         {
             try
             {
-                var testData = _DbContext.Users.Single(x => x.Id == id);
+                var user = User.Identity.IsAuthenticated;
+                if (user)
+                {
+                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var testData = _DbContext.Users.Single(x => x.Id == userid);
 
-                testData.Position = position;
+                    testData.Position = position;
 
-                _DbContext.Users.Update(testData);
-                _DbContext.SaveChanges();
+                    _DbContext.Users.Update(testData);
+                    _DbContext.SaveChanges();
+                }
             }
             catch (InvalidOperationException)
             {
