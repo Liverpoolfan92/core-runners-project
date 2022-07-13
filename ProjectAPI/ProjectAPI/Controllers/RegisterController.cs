@@ -45,7 +45,6 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
-        [Route("{Usermodel}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateUser(CreateUserInputModel input)
         {

@@ -48,7 +48,7 @@ namespace ProjectAPI.Controllers
             return Ok(testData);
         }
 
-        [HttpDelete("{Id:int}")]
+        [HttpDelete("{Id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Delete(string Id)
         {
