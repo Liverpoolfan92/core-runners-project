@@ -41,7 +41,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Create(AddSeatModel_DTO seat)
         {
             var newSeat = new Seat()
@@ -67,7 +67,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Get(int Id)
         {
             var query = _DbContext.Seats
@@ -86,7 +86,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult List()
         {
             //var query = _DbContext.Seats.ToList();
@@ -103,7 +103,7 @@ namespace ProjectAPI.Controllers
 
 
         [HttpPut]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Update(UpdateSeatModel_DTO seat)
         {
             try
@@ -127,7 +127,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Delete(int Id)
         {
             var query = _DbContext.Seats

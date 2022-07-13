@@ -30,7 +30,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Get(string Id)
         {
             var query = _DbContext.Users
@@ -49,7 +49,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Delete(string Id)
         {
             var query = _DbContext.Users
