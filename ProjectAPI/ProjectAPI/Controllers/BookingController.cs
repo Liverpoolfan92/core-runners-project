@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
+using System.Security.Claims;
 
 namespace ProjectAPI.Controllers
 {
@@ -49,40 +50,50 @@ namespace ProjectAPI.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Create(AddBooking_DTO booking)
+        public IActionResult Create(int seat_id,DateTime time)
         {
+            var user = User.Identity.IsAuthenticated;
 
-            var newBooking = new Booking()
+            if (user)
             {
-                UserId = booking.UserId,
-                SeatId = booking.SeatId,
-                Time = booking.Time
+                var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var newBooking = new Booking()
+                {
+                    UserId = userid,
+                    SeatId = seat_id,
+                    Time = time.Date
 
-            };
+                };
 
-            var usersquery = _DbContext.Users.ToList();
-            var seatsquery = _DbContext.Seats.ToList();
+                var usersquery = _DbContext.Users.ToList();
+                var seatsquery = _DbContext.Seats.ToList();
 
-            var query = _DbContext.Bookings
-                .Where(book => book.Time.Date == booking.Time.Date)
-                .ToList();
+                var query = _DbContext.Bookings
+                    .Where(book => book.Time.Date == time.Date)
+                    .ToList();
 
-            if (!IsValid(newBooking, usersquery, seatsquery))
-            {
-                ModelState.AddModelError("Id","The booking seat_id or user_id is invaild");
-                return BadRequest(ModelState);
+                if (!IsValid(newBooking, usersquery, seatsquery))
+                {
+                    ModelState.AddModelError("Id", "The booking seat_id or user_id is invaild");
+                    return BadRequest(ModelState);
+                }
+
+                if (!IsFree(newBooking, query))
+                {
+                    ModelState.AddModelError("SeatId", "The Sead is allready booked for this date");
+                    return BadRequest(ModelState);
+                }
+
+                _DbContext.Bookings.Add(newBooking);
+                _DbContext.SaveChanges();
+
+                return Ok();
             }
-
-            if (!IsFree(newBooking, query))
+            else
             {
-                ModelState.AddModelError("SeatId", "The Sead is allready booked for this date");
-                return BadRequest(ModelState);
+                throw new System.UnauthorizedAccessException();
             }
-
-            _DbContext.Bookings.Add(newBooking);
-            _DbContext.SaveChanges();
-
-            return Ok();
+           
         }
 
         [HttpGet("{dateTime:DateTime}")]
