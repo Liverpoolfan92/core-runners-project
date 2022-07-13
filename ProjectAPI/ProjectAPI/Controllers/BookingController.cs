@@ -23,7 +23,7 @@ namespace ProjectAPI.Controllers
         {
             foreach (Booking book in list)
             {
-                if (book.Time.Date == booking.Time.Date && book.Seat == booking.Seat)
+                if ((book.Time.Date == booking.Time.Date) && (book.SeatId == booking.SeatId || book.UserId == booking.UserId))
                 {
                     return false;
                 }
