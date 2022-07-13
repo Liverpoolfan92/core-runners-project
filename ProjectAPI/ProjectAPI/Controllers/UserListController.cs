@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
+using System.Net;
 
 namespace ProjectAPI.Controllers
 {
@@ -27,7 +30,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id}")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Get(string Id)
         {
             var query = _DbContext.Users
@@ -46,7 +49,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpDelete("{Id:int}")]
-        //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Delete(string Id)
         {
             var query = _DbContext.Users
