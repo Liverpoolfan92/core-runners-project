@@ -76,7 +76,6 @@ namespace ProjectAPI.Controllers
             return Ok(token);
 
         }
-
     }
 }
 

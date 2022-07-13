@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
@@ -171,7 +172,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPut("position")]
-         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdatePosition(string position)
         {
             try
@@ -195,6 +196,22 @@ namespace ProjectAPI.Controllers
             }
             return Ok();
         }
+
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+        public async Task<IActionResult> ActivityAsync(DateTime start, DateTime end)
+        {
+            var user = User.Identity.IsAuthenticated;
+            if (user)
+            {
+                int count = await _DbContext.Bookings.CountAsync<Booking>(book => book.Time.Date > start && book.Time.Date < end && book.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+                return Ok(count);
+            }
+
+            throw new UnauthorizedAccessException();
+        }
+
 
     }
 }
