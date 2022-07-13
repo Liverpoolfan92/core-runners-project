@@ -17,11 +17,13 @@ namespace ProjectAPI.Controllers
     {
         private readonly AppDbContext _DbContext;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RegisterController(AppDbContext testDBContext, UserManager<User> userManager)
+        public RegisterController(AppDbContext testDBContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _DbContext = testDBContext;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
 
@@ -45,7 +47,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
         public async Task<IActionResult> CreateUser(CreateUserInputModel input)
         {
             var newUser = new User(input.Name);

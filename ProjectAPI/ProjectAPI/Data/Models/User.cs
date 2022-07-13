@@ -5,6 +5,8 @@ namespace ProjectAPI.Data.Models
 {
     public class User : IdentityUser
     {
+        public List<IdentityRole> Roles { get; set; }
+
         public Uri? Image { get; set; } = default!;
 
 
