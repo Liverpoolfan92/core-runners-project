@@ -30,14 +30,19 @@ namespace ProjectAPI.Controllers
         }
 
 
-        private string CreateToken(User user)
+        private async Task<string> CreateToken(User user)
         {
-            var claims = new[]
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim> 
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                
+                new Claim(ClaimTypes.NameIdentifier,user.Id)
             };
+            if (roles.Any(r => r == "Admin"))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
+
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
@@ -67,11 +72,10 @@ namespace ProjectAPI.Controllers
                 ModelState.AddModelError("", "Error in password");
                 return BadRequest(ModelState);
             }
-            var token = CreateToken(user);
+            var token = await CreateToken(user);
             return Ok(token);
 
         }
-
     }
 }
 

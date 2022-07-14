@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
+using System.Net;
+using System.Security.Claims;
 
 namespace ProjectAPI.Controllers
 {
@@ -27,11 +31,11 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id}")]
-        //[Authorize]
-        public IActionResult Get(string Id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult Get()
         {
             var query = _DbContext.Users
-                .Where(user => user.Id == Id)
+                .Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 .ToList();
 
             if (query.Count <= 0)
@@ -40,13 +44,13 @@ namespace ProjectAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var testData = _DbContext.Users.Single(x => x.Id == Id);
+            var testData = _DbContext.Users.Single(x => x.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             return Ok(testData);
         }
 
-        [HttpDelete("{Id:int}")]
-        //[Authorize]
+        [HttpDelete("{Id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult Delete(string Id)
         {
             var query = _DbContext.Users
