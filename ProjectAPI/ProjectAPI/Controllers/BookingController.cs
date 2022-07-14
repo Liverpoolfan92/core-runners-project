@@ -97,7 +97,7 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{dateTime:DateTime}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult List(DateTime dateTime)
         {
             var query = _DbContext.Seats

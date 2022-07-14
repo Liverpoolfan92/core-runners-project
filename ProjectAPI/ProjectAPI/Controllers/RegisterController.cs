@@ -204,31 +204,27 @@ namespace ProjectAPI.Controllers
             var user = User.Identity.IsAuthenticated;
             if (user)
             {
-                int count = await _DbContext.Bookings.CountAsync<Booking>(book => book.Time.Date > start && book.Time.Date < end && book.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+                int count = await _DbContext.Bookings
+                    .CountAsync<Booking>(book => book.Time.Date > start && book.Time.Date < end && book.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
                 return Ok(count);
             }
 
             throw new UnauthorizedAccessException();
         }
 
-        //[HttpGet]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
-        //public async Task<IActionResult> UsersActivity(DateTime start, DateTime end)
-        //{
-        //    var list = new Dictionary<User, int>();
-        //    foreach (var user in _DbContext.Users)
-        //    {
-        //        if (user.Id != User.FindFirstValue(ClaimTypes.NameIdentifier))
-        //        {
-        //         var query = _DbContext.Bookings
-        //                            .Where(book => book.UserId == user.Id && book.Time.Date > start.Date && book.Time.Date < end.Date);
-        //            var a = await query.CountAsync();
-        //            list.Add(user, a);
-        //        }
-        //    }
-        //    return Ok();
-        //}
+        public IActionResult UsersActivity(DateTime start, DateTime end)
+        {
+            var query = _DbContext.Users
+                        .Where(x => x.bookings.Any(book => book.Time.Date > start.Date && book.Time.Date < end.Date))
+                        .GroupBy(x => x.Id)
+                        .Select(x => new UserActivityModel(x.Key,x.Count())
+                        )
+                        .ToList();
+            return Ok(query);
+        }
 
 
     }
