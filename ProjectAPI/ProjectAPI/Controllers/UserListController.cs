@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using System.Net;
+using System.Security.Claims;
 
 namespace ProjectAPI.Controllers
 {
@@ -30,11 +31,11 @@ namespace ProjectAPI.Controllers
         }
 
         [HttpGet("{Id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        public IActionResult Get(string Id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult Get()
         {
             var query = _DbContext.Users
-                .Where(user => user.Id == Id)
+                .Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value)
                 .ToList();
 
             if (query.Count <= 0)
@@ -43,7 +44,7 @@ namespace ProjectAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var testData = _DbContext.Users.Single(x => x.Id == Id);
+            var testData = _DbContext.Users.Single(x => x.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             return Ok(testData);
         }

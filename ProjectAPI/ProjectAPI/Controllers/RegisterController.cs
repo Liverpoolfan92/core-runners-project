@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -197,10 +196,10 @@ namespace ProjectAPI.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpGet("{start}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
-        public async Task<IActionResult> ActivityAsync(DateTime start, DateTime end)
+        public async Task<IActionResult> Activity(DateTime start, DateTime end)
         {
             var user = User.Identity.IsAuthenticated;
             if (user)
@@ -211,6 +210,25 @@ namespace ProjectAPI.Controllers
 
             throw new UnauthorizedAccessException();
         }
+
+        //[HttpGet]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        //public async Task<IActionResult> UsersActivity(DateTime start, DateTime end)
+        //{
+        //    var list = new Dictionary<User, int>();
+        //    foreach (var user in _DbContext.Users)
+        //    {
+        //        if (user.Id != User.FindFirstValue(ClaimTypes.NameIdentifier))
+        //        {
+        //         var query = _DbContext.Bookings
+        //                            .Where(book => book.UserId == user.Id && book.Time.Date > start.Date && book.Time.Date < end.Date);
+        //            var a = await query.CountAsync();
+        //            list.Add(user, a);
+        //        }
+        //    }
+        //    return Ok();
+        //}
 
 
     }
