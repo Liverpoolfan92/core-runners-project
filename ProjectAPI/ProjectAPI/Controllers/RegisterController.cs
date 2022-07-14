@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
+using ProjectAPI.Services;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -18,12 +19,14 @@ namespace ProjectAPI.Controllers
         private readonly AppDbContext _DbContext;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ICurrentUserService _service;
 
-        public RegisterController(AppDbContext testDBContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public RegisterController(AppDbContext testDBContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager,ICurrentUserService service)
         {
             _DbContext = testDBContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _service = service;
         }
 
 
@@ -53,9 +56,7 @@ namespace ProjectAPI.Controllers
             var newUser = new User(input.Name);
             newUser.Email = input.Email;
 
-            var tmp1 =  await _userManager.CreateAsync(newUser,input.Password);
-            //var tmp2 = await _userManager.AddToRoleAsync(newUser,"User");
-            
+            var tmp1 =  await _userManager.CreateAsync(newUser,input.Password);            
             return Ok();
         }
 
@@ -65,18 +66,13 @@ namespace ProjectAPI.Controllers
         {
             try
             {
-                var user = User.Identity.IsAuthenticated;
+                var user_id = _service.GetUserId();
+                var testData = _DbContext.Users.Single(x => x.Id == user_id);
 
-                if (user)
-                {
-                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var testData = _DbContext.Users.Single(x => x.Id == userid);
+                testData.Image = image;
 
-                    testData.Image = image;
-
-                    _DbContext.Users.Update(testData);
-                    _DbContext.SaveChanges();
-                }
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
             }
             catch (InvalidOperationException)
             {
@@ -92,18 +88,13 @@ namespace ProjectAPI.Controllers
         {
             try
             {
-                var user = User.Identity.IsAuthenticated;
+                var user_id = _service.GetUserId();
+                var testData = _DbContext.Users.Single(x => x.Id == user_id);
 
-                if (user)
-                {
-                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var testData = _DbContext.Users.Single(x => x.Id == userid);
+                testData.PhoneNumber = phone;
 
-                    testData.PhoneNumber = phone;
-
-                    _DbContext.Users.Update(testData);
-                    _DbContext.SaveChanges();
-                }
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
             }
             catch (InvalidOperationException)
             {
@@ -119,23 +110,13 @@ namespace ProjectAPI.Controllers
         {
             try
             {
-                var user = User.Identity.IsAuthenticated;
-                if (user)
-                {
-                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var testData = _DbContext.Users.Single(x => x.Id == userid);
+                var user_id = _service.GetUserId();
+                var testData = _DbContext.Users.Single(x => x.Id == user_id);
 
-                    testData.Age = age;
+                testData.Age = age;
 
-                    _DbContext.Users.Update(testData);
-                    _DbContext.SaveChanges();
-                }
-                else
-                {
-                    ModelState.AddModelError("Id", "Not Authorized");
-                    return BadRequest(ModelState);
-                }
-
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
             }
             catch (InvalidOperationException)
             {
@@ -150,17 +131,13 @@ namespace ProjectAPI.Controllers
         public IActionResult UpdateEmail(string email)
         {
             try{
-                var user = User.Identity.IsAuthenticated;
-                if (user)
-                {
-                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var testData = _DbContext.Users.Single(x => x.Id == userid);
+                var user_id = _service.GetUserId();
+                var testData = _DbContext.Users.Single(x => x.Id == user_id);
 
-                    testData.Email = email;
+                testData.Email = email;
 
-                    _DbContext.Users.Update(testData);
-                    _DbContext.SaveChanges();
-                }
+                _DbContext.Users.Update(testData);
+                _DbContext.SaveChanges();
             }
             catch (InvalidOperationException)
             {
@@ -176,17 +153,13 @@ namespace ProjectAPI.Controllers
         {
             try
             {
-                var user = User.Identity.IsAuthenticated;
-                if (user)
-                {
-                    var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var testData = _DbContext.Users.Single(x => x.Id == userid);
-
-                    testData.Position = position;
-
-                    _DbContext.Users.Update(testData);
-                    _DbContext.SaveChanges();
-                }
+                var user_id = _service.GetUserId();
+                var testData = _DbContext.Users.Single(x => x.Id == user_id);
+                
+                testData.Position = position;
+                
+                _DbContext.Users.Update(testData);    
+                _DbContext.SaveChanges();
             }
             catch (InvalidOperationException)
             {
@@ -201,15 +174,11 @@ namespace ProjectAPI.Controllers
 
         public async Task<IActionResult> Activity(DateTime start, DateTime end)
         {
-            var user = User.Identity.IsAuthenticated;
-            if (user)
-            {
-                int count = await _DbContext.Bookings
-                    .CountAsync<Booking>(book => book.Time.Date > start && book.Time.Date < end && book.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
-                return Ok(count);
-            }
-
-            throw new UnauthorizedAccessException();
+            var user_id = _service.GetUserId();
+            int count = await _DbContext.Bookings
+                .CountAsync<Booking>(book => book.Time.Date > start && book.Time.Date < end && book.UserId == user_id);
+                
+            return Ok(count);
         }
 
         [HttpGet]
@@ -220,8 +189,7 @@ namespace ProjectAPI.Controllers
             var query = _DbContext.Users
                         .Where(x => x.bookings.Any(book => book.Time.Date > start.Date && book.Time.Date < end.Date))
                         .GroupBy(x => x.Id)
-                        .Select(x => new UserActivityModel(x.Key,x.Count())
-                        )
+                        .Select(x => new UserActivityModel(x.Key,x.Count()))
                         .ToList();
             return Ok(query);
         }

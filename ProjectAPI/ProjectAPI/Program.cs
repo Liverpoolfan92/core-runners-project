@@ -9,6 +9,7 @@ using ProjectAPI.Data;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Extensions;
 using ProjectAPI.Hubs;
+using ProjectAPI.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +66,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddSignalR();
+
+builder.Services.AddTransient<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services
     .AddDbContextPool<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
