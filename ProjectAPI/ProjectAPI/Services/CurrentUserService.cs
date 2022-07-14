@@ -11,7 +11,8 @@ namespace ProjectAPI.Services
 
         public string GetUserId()
         {
-            return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+             return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
+                throw new Exception("No user login");
         }
 
     }
