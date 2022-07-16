@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
+using ProjectAPI.Services;
 using System.Net;
 using System.Security.Claims;
 
@@ -15,14 +16,18 @@ namespace ProjectAPI.Controllers
     {
         private readonly AppDbContext _DbContext;
         private readonly UserManager<User> _userManager;
+        private readonly ICurrentUserService _service;
 
-        public UserListController(AppDbContext testDBContext, UserManager<User> userManager)
+
+        public UserListController(AppDbContext testDBContext, UserManager<User> userManager, ICurrentUserService currentUserService)
         {
             _DbContext = testDBContext;
             _userManager = userManager;
+            _service = currentUserService;
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public IActionResult List()
         {
             var testData = _DbContext.Users.ToList();
@@ -34,8 +39,10 @@ namespace ProjectAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Get()
         {
+            var user_id = _service.GetUserId();
+
             var query = _DbContext.Users
-                .Where(user => user.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                .Where(user => user.Id == user_id)
                 .ToList();
 
             if (query.Count <= 0)
@@ -44,7 +51,7 @@ namespace ProjectAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var testData = _DbContext.Users.Single(x => x.Id == User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var testData = _DbContext.Users.Single(x => x.Id == user_id);
 
             return Ok(testData);
         }

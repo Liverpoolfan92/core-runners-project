@@ -13,6 +13,8 @@ namespace ProjectAPI.Data.Models
 
         public int Age { get; set; }
 
+        public List<Booking> bookings { get; set; }
+
         public User(string userName) : base(userName)
         {
 

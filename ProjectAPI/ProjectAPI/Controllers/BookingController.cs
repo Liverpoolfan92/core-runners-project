@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Context;
 using ProjectAPI.Data.Models;
 using ProjectAPI.Models;
+using ProjectAPI.Services;
 using System.Security.Claims;
 
 namespace ProjectAPI.Controllers
@@ -13,10 +14,12 @@ namespace ProjectAPI.Controllers
     public class BookingController : Controller
     {
         private readonly AppDbContext _DbContext;
+        private readonly ICurrentUserService _service;
 
-        public BookingController(AppDbContext testDBContext)
+        public BookingController(AppDbContext testDBContext, ICurrentUserService currentUserService)
         {
             _DbContext = testDBContext;
+            _service = currentUserService;
         }
 
         public static bool IsFree(Booking booking, List<Booking> list)
@@ -52,52 +55,43 @@ namespace ProjectAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Create(int seat_id,DateTime time)
         {
-            var user = User.Identity.IsAuthenticated;
-
-            if (user)
+            var user_id = _service.GetUserId();
+            var newBooking = new Booking()
             {
-                var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                var newBooking = new Booking()
-                {
-                    UserId = userid,
-                    SeatId = seat_id,
-                    Time = time.Date
+                UserId = user_id,
+                SeatId = seat_id,
+                Time = time.Date
 
-                };
+            };
 
-                var usersquery = _DbContext.Users.ToList();
-                var seatsquery = _DbContext.Seats.ToList();
+            var usersquery = _DbContext.Users.ToList();
+            var seatsquery = _DbContext.Seats.ToList();
 
-                var query = _DbContext.Bookings
-                    .Where(book => book.Time.Date == time.Date)
-                    .ToList();
+            var query = _DbContext.Bookings
+                 .Where(book => book.Time.Date == time.Date)
+                 .ToList();
 
-                if (!IsValid(newBooking, usersquery, seatsquery))
-                {
-                    ModelState.AddModelError("Id", "The booking seat_id or user_id is invaild");
-                    return BadRequest(ModelState);
-                }
-
-                if (!IsFree(newBooking, query))
-                {
-                    ModelState.AddModelError("SeatId", "The Sead is allready booked for this date");
-                    return BadRequest(ModelState);
-                }
-
-                _DbContext.Bookings.Add(newBooking);
-                _DbContext.SaveChanges();
-
-                return Ok();
-            }
-            else
+            if (!IsValid(newBooking, usersquery, seatsquery))
             {
-                throw new System.UnauthorizedAccessException();
+                ModelState.AddModelError("Id", "The booking seat_id or user_id is invaild");
+                return BadRequest(ModelState);
             }
-           
-        }
+
+            if (!IsFree(newBooking, query))
+            {
+                ModelState.AddModelError("SeatId", "The Sead is allready booked for this date");
+                return BadRequest(ModelState);
+            }
+
+            _DbContext.Bookings.Add(newBooking);
+            _DbContext.SaveChanges();
+
+             return Ok();
+        }  
+
 
         [HttpGet("{dateTime:DateTime}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult List(DateTime dateTime)
         {
             var query = _DbContext.Seats
